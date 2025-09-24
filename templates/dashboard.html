@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="dashboard-header">
+        <h1>
+            <i class="fas fa-chart-line me-2"></i>
+            Welcome back, {{ user.username }}!
+        </h1>
+        <p class="text-muted">Track and manage your monthly expenses</p>
+    </div>
+
+    <!-- Expense Input Form -->
+    <div class="expense-form-card">
+        <h3><i class="fas fa-plus-circle me-2"></i>Add New Expense</h3>
+        <form id="expense-form" class="expense-form">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="date" class="form-label">Date</label>
+                    <input type="date" class="form-control" id="date" required>
+                </div>
+                <div class="col-md-9">
+                    <label for="details" class="form-label">Details</label>
+                    <input type="text" class="form-control" id="details" placeholder="e.g., Rice=2300, Taxi=6000" required>
+                </div>
+            </div>
+            
+            <div class="row g-3 mt-2">
+                <div class="col-md-2">
+                    <label for="cat1" class="form-label">Foods</label>
+                    <input type="number" class="form-control" id="cat1" placeholder="0" min="0" step="0.01" value="0">
+                </div>
+                <div class="col-md-2">
+                    <label for="cat2" class="form-label">Clothes</label>
+                    <input type="number" class="form-control" id="cat2" placeholder="0" min="0" step="0.01" value="0">
+                </div>
+                <div class="col-md-2">
+                    <label for="cat3" class="form-label">Family</label>
+                    <input type="number" class="form-control" id="cat3" placeholder="0" min="0" step="0.01" value="0">
+                </div>
+                <div class="col-md-2">
+                    <label for="cat4" class="form-label">Health</label>
+                    <input type="number" class="form-control" id="cat4" placeholder="0" min="0" step="0.01" value="0">
+                </div>
+                <div class="col-md-2">
+                    <label for="cat5" class="form-label">Others</label>
+                    <input type="number" class="form-control" id="cat5" placeholder="0" min="0" step="0.01" value="0">
+                </div>
+                <div class="col-md-2">
+                    <label for="income" class="form-label">Income</label>
+                    <input type="number" class="form-control" id="income" placeholder="0" min="0" step="0.01" value="0">
+                </div>
+            </div>
+            
+            <div class="row g-3 mt-2">
+                <div class="col-md-10">
+                    <label for="remarks" class="form-label">Remarks</label>
+                    <input type="text" class="form-control" id="remarks" placeholder="e.g., home_kitchen=500MMK">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-plus me-1"></i>Add
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- Expense Table -->
+        <div class="col-lg-8">
+            <div class="table-card">
+                <h3><i class="fas fa-table me-2"></i>Expense Records</h3>
+                <div class="table-responsive">
+                    <table class="table table-striped" id="expense-table">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Date</th>
+                                <th>Details</th>
+                                <th>Foods</th>
+                                <th>Clothes</th>
+                                <th>Family</th>
+                                <th>Health</th>
+                                <th>Others</th>
+                                <th>Daily Total</th>
+                                <th>Remarks</th>
+                                <th>Income</th>
+                                {% if user.is_admin() %}
+                                <th>User</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr class="table-secondary fw-bold">
+                                <td colspan="2">Monthly Total</td>
+                                <td id="sum1">0</td>
+                                <td id="sum2">0</td>
+                                <td id="sum3">0</td>
+                                <td id="sum4">0</td>
+                                <td id="sum5">0</td>
+                                <td id="sumTotal">0</td>
+                                <td></td>
+                                <td id="sumIncome">0</td>
+                                {% if user.is_admin() %}
+                                <td></td>
+                                {% endif %}
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="col-lg-4">
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-pie me-2"></i>Expense Breakdown</h3>
+                <canvas id="expenseChart" width="200" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+{% endblock %}

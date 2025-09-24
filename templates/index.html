@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <div class="hero-content">
+                    <h1 class="display-4 mb-4">
+                        <i class="fas fa-wallet text-primary me-3"></i>
+                        Welcome to Expense Tracker
+                    </h1>
+                    <p class="lead mb-5">
+                        Take control of your finances with our comprehensive expense tracking system. 
+                        Monitor your spending, categorize expenses, and gain insights into your financial habits.
+                    </p>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg me-md-2">
+                            <i class="fas fa-user-plus me-2"></i>Get Started
+                        </a>
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="features-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="feature-card">
+                    <div class="text-center">
+                        <i class="fas fa-chart-pie feature-icon text-primary mb-3"></i>
+                        <h4>Visual Analytics</h4>
+                        <p class="text-muted">
+                            Interactive charts and graphs to visualize your spending patterns 
+                            across different categories.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mb-4">
+                <div class="feature-card">
+                    <div class="text-center">
+                        <i class="fas fa-tags feature-icon text-success mb-3"></i>
+                        <h4>Smart Categories</h4>
+                        <p class="text-muted">
+                            Organize expenses into categories: Foods, Clothes, Family, 
+                            Health, and Others for better tracking.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mb-4">
+                <div class="feature-card">
+                    <div class="text-center">
+                        <i class="fas fa-shield-alt feature-icon text-info mb-3"></i>
+                        <h4>Secure & Private</h4>
+                        <p class="text-muted">
+                            Your financial data is secure and private. Each user 
+                            can only access their own expense records.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

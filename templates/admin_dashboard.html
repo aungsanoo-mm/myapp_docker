@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="dashboard-header">
+        <h1>
+            <i class="fas fa-users-cog me-2"></i>
+            Admin Dashboard
+        </h1>
+        <p class="text-muted">System overview and user management</p>
+    </div>
+
+    <!-- User Statistics -->
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="admin-stats-card">
+                <h3><i class="fas fa-chart-bar me-2"></i>User Expense Summary</h3>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>User</th>
+                                <th>Total Expenses</th>
+                                <th>Total Income</th>
+                                <th>Number of Records</th>
+                                <th>Net Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for summary in user_summaries %}
+                            <tr>
+                                <td>{{ summary[0] }}</td>
+                                <td class="text-danger">{{ "%.2f"|format(summary[2]) }}</td>
+                                <td class="text-success">{{ "%.2f"|format(summary[3]) }}</td>
+                                <td>{{ summary[1] }}</td>
+                                <td class="{{ 'text-success' if (summary[3] - summary[2]) > 0 else 'text-danger' }}">
+                                    {{ "%.2f"|format(summary[3] - summary[2]) }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Management -->
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="admin-users-card">
+                <h3><i class="fas fa-users me-2"></i>Registered Users</h3>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Registered</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user[0] }}</td>
+                                <td>{{ user[1] }}</td>
+                                <td>{{ user[2] }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'warning' if user[3] == 'admin' else 'secondary' }}">
+                                        {{ user[3].title() }}
+                                    </span>
+                                </td>
+                                <td>{{ user[4].strftime('%Y-%m-%d %H:%M') if user[4] else 'N/A' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- All Expenses View -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="admin-expenses-card">
+                <h3><i class="fas fa-list me-2"></i>All User Expenses</h3>
+                <div class="table-responsive">
+                    <table class="table table-striped" id="admin-expense-table">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>User</th>
+                                <th>Date</th>
+                                <th>Details</th>
+                                <th>Foods</th>
+                                <th>Clothes</th>
+                                <th>Family</th>
+                                <th>Health</th>
+                                <th>Others</th>
+                                <th>Total</th>
+                                <th>Income</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Load all expenses for admin view
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/expense')
+        .then(response => response.json())
+        .then(expenses => {
+            const tbody = document.querySelector('#admin-expense-table tbody');
+            expenses.forEach(expense => {
+                const dayTotal = expense.cat1 + expense.cat2 + expense.cat3 + expense.cat4 + expense.cat5;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="badge bg-primary">${expense.username || 'Unknown'}</span></td>
+                    <td>${expense.date}</td>
+                    <td>${expense.details}</td>
+                    <td>${expense.cat1}</td>
+                    <td>${expense.cat2}</td>
+                    <td>${expense.cat3}</td>
+                    <td>${expense.cat4}</td>
+                    <td>${expense.cat5}</td>
+                    <td><strong>${dayTotal.toFixed(2)}</strong></td>
+                    <td class="text-success">${expense.income}</td>
+                    <td>${expense.remarks}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading expenses:', error);
+        });
+});
+</script>
+{% endblock %}

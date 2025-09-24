@@ -1,0 +1,22 @@
+FROM ubuntu:latest
+
+#Install nginx service
+RUN  apt-get update -y && \
+     apt install nginx -y && \
+     apt install mysql-client -y && \
+     rm -rf /var/lib/apt 
+#Copy nginx config file
+COPY nginx.conf /etc/nginx.httpd.d/default.conf/
+#Create html directory
+RUN mkdir -p /var/www/html
+RUN useradd nginx
+
+COPY index.html /var/www/html
+RUN chown -R nginx:nginx /var/www/html
+
+
+#Set working directory
+WORKDIR /var/www/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+

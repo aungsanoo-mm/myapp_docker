@@ -1,0 +1,55 @@
+
+services:
+  # 1. Database Service
+  # db:
+  #   image: postgres:15
+  #   container_name: expense-postgres
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: password
+  #     POSTGRES_DB: expense_tracker
+  #   ports:
+  #     - "5432:5432"
+  #   networks:
+  #     - expense-network
+
+  # # 2. Keycloak Service
+  # keycloak:
+  #   image: quay.io/keycloak/keycloak:latest
+  #   container_name: keycloak-server
+  #   command: start-dev
+  #   environment:
+  #     KC_BOOTSTRAP_ADMIN_USERNAME: admin
+  #     KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+  #   ports:
+  #     - "8080:8080"
+  #   networks:
+  #     - expense-network
+
+  # 3. Flask App Service
+  app:
+    image: 740990077/expense-tracker:v2
+    container_name: expense-app
+    # depends_on:
+    #   - db
+    #   - keycloak
+    environment:
+      # Database လိပ်စာကို 'db' (service name) နဲ့ ချိတ်ထားပါတယ်
+      - DATABASE_URL=postgresql://postgres:password@db:5432/expense_tracker
+      
+      # Keycloak config
+      - KEYCLOAK_CLIENT_ID=my-flask-app
+      - KEYCLOAK_CLIENT_SECRET=dVfhkXsRbVj02VR48eiBjtspev80r4z6
+      # Keycloak လိပ်စာကို 'keycloak' (service name) နဲ့ ချိတ်ထားပါတယ်
+      - KEYCLOAK_METADATA_URL=http://keycloak:8080/realms/expense-tracker/.well-known/openid-configuration
+      
+      - SECRET_KEY=any-random-string-here
+    ports:
+      - "5000:5000"
+    networks:
+      - expense-network
+
+# Network သတ်မှတ်ခြင်း
+networks:
+  expense-network:
+    driver: bridge

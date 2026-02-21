@@ -1,0 +1,20 @@
+{% extends \"base.html\" %}
+{% block content %}
+<div class=\"container\">
+    <div class=\"row justify-content-center\">
+        <div class=\"col-md-6 col-lg-4\">
+            <div class=\"auth-card text-center\">
+                <i class=\"fas fa-shield-alt fa-3x text-primary mb-3\"></i>
+                <h2>Secure Login</h2>
+                <p class=\"text-muted\">We use Keycloak for secure authentication.</p>
+                
+                <div class=\"d-grid gap-2 mt-4\">
+                    <a href=\"{{ url_for('login') }}\" class=\"btn btn-primary btn-lg\">
+                        <i class=\"fas fa-sign-in-alt me-2\"></i> Sign In with Keycloak
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

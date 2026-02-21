@@ -1,0 +1,118 @@
+
+services:
+  # 1. Database Service
+  db:
+    image: postgres:15
+    container_name: expense-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: expense_tracker
+    ports:
+      - "5432:5432"
+    networks:
+      - expense-network
+
+  # 2. Keycloak Service
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak-server
+    command: start-dev
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    networks:
+      - expense-network
+
+  # # 3. Flask App Service
+  app:
+    image: 740990077/expense-tracker:v2
+    container_name: expense-app
+    depends_on:
+      - db
+      # - keycloak
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/expense_tracker
+      
+      # Keycloak config
+      - KEYCLOAK_CLIENT_ID=my-flask-app
+      - KEYCLOAK_CLIENT_SECRET=0q3AqLhNfybrDjOfKZHXgQOx1Uyt46Ya
+      - KEYCLOAK_METADATA_URL=http://172.19.194.91:8080/realms/expense-tracker/.well-known/openid-configuration
+      
+      - SECRET_KEY=any-random-string-here
+    ports:
+      - "5000:5000"
+    networks:
+      - expense-network
+
+
+  #4. Prometheus (အချက်အလက် သိမ်းဆည်းရန်)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - expense-network
+
+  # # 5. Grafana (Dashboard ကြည့်ရန်)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - expense-network
+
+  # 6. Postgres Exporter (Database အချက်အလက်များကို Prometheus နားလည်အောင် ပြောင်းပေးရန်)
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter
+    container_name: postgres-exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:password@db:5432/expense_tracker?sslmode=disable"
+    networks:
+      - expense-network
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    ports:
+      - "8081:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - expense-network
+
+      
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    ports:
+      - "9100:9100"
+    networks:
+      - expense-network
+
+
+
+
+
+networks:
+  expense-network:
+    driver: bridge
+  

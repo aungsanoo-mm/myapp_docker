@@ -51,7 +51,7 @@ resource "docker_container" "db" {
 # 1. Tell Terraform to pull the image from GitHub Packages
 resource "docker_image" "webapp" {
   # Replace with your actual github username and repo name (must be lowercase)
-  name = ghcr.io/aungsanoo-mm/myapp_docker/mywebapp:v1
+  name = "ghcr.io/aungsanoo-mm/myapp_docker/mywebapp:v1"
 }
 
 # 2. Deploy the container using the pulled image

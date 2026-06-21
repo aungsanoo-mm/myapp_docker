@@ -11,25 +11,29 @@ permissions:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+  # Step 2: Run Terraform to deploy the local container
+    - name: Run Terraform Apply
+      run: |
+        terraform init
+        terraform apply -auto-approve
+    # # Log into GitHub Container Registry (ghcr.io)
+    # - name: Log in to GitHub Container Registry
+    #   uses: docker/login-action@v3
+    #   with:
+    #     registry: ghcr.io
+    #     username: ${{ github.actor }}
+    #     password: ${{ secrets.GITHUB_TOKEN }}
 
-    # Log into GitHub Container Registry (ghcr.io)
-    - name: Log in to GitHub Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-
-    # Build and Push the image to your repository's package section
-    - name: Build and Push Docker Image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        push: true
-        tags: |
-          ghcr.io/${{ github.repository }}/mywebapp:v1
+    # # Build and Push the image to your repository's package section
+    # - name: Build and Push Docker Image
+    #   uses: docker/build-push-action@v5
+    #   with:
+    #     context: .
+    #     push: true
+    #     tags: |
+    #       ghcr.io/${{ github.repository }}/mywebapp:v1

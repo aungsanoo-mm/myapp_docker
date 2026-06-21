@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "docker" {
-  host  = "unix:///var/run/docker.sock"
+  # host  = "unix:///var/run/docker.sock"
 }
 #Docker network
 data "docker_network" "myapp" {
@@ -44,14 +44,25 @@ resource "docker_container" "db" {
   }
 }
 #pull the app image
-resource "docker_image" "mywebapp" {
-  name  = "docker-demo:local"
-} 
+# resource "docker_image" "mywebapp" {
+#   name  = "docker-demo:local"
+# } 
 
-#creation a container
+# 1. Tell Terraform to pull the image from GitHub Packages
+resource "docker_image" "webapp" {
+  # Replace with your actual github username and repo name (must be lowercase)
+  name = ghcr.io/aungsanoo-mm/myapp_docker/mywebapp:v1
+}
+
+# 2. Deploy the container using the pulled image
 resource "docker_container" "webapp" {
-  image = docker_image.mywebapp.image_id
-  name  = "mywebapp" 
+  name  = "mywebapp"
+  image = docker_image.webapp.image_id
+
+# #creation a container
+# resource "docker_container" "webapp" {
+#   image = docker_image.mywebapp.image_id
+#   name  = "mywebapp" 
   networks_advanced {
     name = data.docker_network.myapp.name
     ipv4_address = "172.19.0.100"

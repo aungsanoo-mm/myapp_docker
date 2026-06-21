@@ -12,8 +12,8 @@ WORKDIR /app
 
 # Install system dependencies including PostgreSQL client libraries
 RUN apt-get update && apt-get install -y \
-    gcc \
-    libpq-dev \
+    # gcc \
+    # libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies

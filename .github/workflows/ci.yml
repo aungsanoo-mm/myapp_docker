@@ -1,0 +1,23 @@
+name: CI Test Pipeline
+
+# Trigger the workflow on push to the main branch
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Check out the repository code onto the GitHub runner
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Step 2: Test building the Docker image to make sure the Dockerfile works
+    - name: Build Docker Image
+      run: |
+        docker build -t mywebapp:test .
+        docker images

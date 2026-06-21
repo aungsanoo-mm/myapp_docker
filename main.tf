@@ -25,7 +25,7 @@ resource "docker_container" "db" {
   name   = "db"
   networks_advanced {
     name = data.docker_network.myapp.name
-    ipv4_address = "172.18.0.101"
+    ipv4_address = "172.19.0.101"
   }
   ports {
     internal = 5432
@@ -45,7 +45,7 @@ resource "docker_container" "db" {
 }
 #pull the app image
 resource "docker_image" "mywebapp" {
-  name  = "expense-tracker:latest"
+  name  = "docker-demo:local"
 } 
 
 #creation a container
@@ -54,7 +54,7 @@ resource "docker_container" "webapp" {
   name  = "mywebapp" 
   networks_advanced {
     name = data.docker_network.myapp.name
-    ipv4_address = "172.18.0.100"
+    ipv4_address = "172.19.0.100"
   }
   ports {
     internal = 5000

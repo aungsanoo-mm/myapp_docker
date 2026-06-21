@@ -19,7 +19,7 @@ jobs:
   # Step 2: Run Terraform to deploy the local container
     - name: Run Terraform Apply
       run: |
-        # terraform init
+        terraform init
         terraform destroy -auto-approve
     # # Log into GitHub Container Registry (ghcr.io)
     # - name: Log in to GitHub Container Registry
